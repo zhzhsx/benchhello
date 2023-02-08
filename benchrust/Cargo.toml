@@ -1,0 +1,21 @@
+[package]
+name = "benchrust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#hyper = {version="*", features=["full"]}
+
+hyper = { git = "https://github.com/zhzhsx/hyper", branch = "0.14.x", features = [
+    "http1",
+    "server",
+] }
+
+tokio = {version = "1",features = ["full"]}
+tikv-jemallocator = "0.5.0"
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
