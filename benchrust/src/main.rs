@@ -41,7 +41,7 @@ fn single_threaded_server() {
                     .serve_connection(tcp_stream, service_fn(hello))
                     .await
                 {
-                    eprintln!("Error while serving HTTP connection: {}", http_err);
+                    println!("Error while serving HTTP connection: {}", http_err);
                 }
             });
         }
