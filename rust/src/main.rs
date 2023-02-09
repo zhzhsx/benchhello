@@ -44,7 +44,7 @@ fn single_threaded_server() {
             let (tcp_stream, _) = listener.accept().await.unwrap();
             tokio::task::spawn(async move {
                 if let Err(http_err) = Http::new()
-                    //.pipeline_flush(true)
+                    .pipeline_flush(true)
                     .serve_connection(tcp_stream, service_fn(hello))
                     .await
                 {

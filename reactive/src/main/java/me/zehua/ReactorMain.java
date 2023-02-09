@@ -7,7 +7,6 @@ import reactor.netty.resources.LoopResources;
 
 public class ReactorMain {
     public static void main(String[] args) {
-        // java http 链接越少，qps越高 (30 vs 100)
         LoopResources loop = LoopResources.create("event-loop", 1, 4, true);
 
         HttpServer server = HttpServer.create()
