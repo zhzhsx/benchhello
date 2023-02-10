@@ -23,6 +23,11 @@ public class ReactorMain {
                             // System.out.println("====" + Thread.currentThread().getName());
                             return response.sendString(Mono.just("hello"));
                         }));
+                // .route(routes -> routes.route(r -> true,
+                //         (request, response) -> {
+                //             // System.out.println("====" + Thread.currentThread().getName());
+                //             return response.sendString(Mono.just("hello"));
+                //         }));
         server.warmup().block();
         DisposableServer s = server.bindNow();
         System.out.println("starting server");

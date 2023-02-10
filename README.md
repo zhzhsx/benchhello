@@ -3,7 +3,7 @@
 local vs network
 相同规格服务器的差异，似乎有，之后有空再看一下
 内存是16g，因为阿里云这款cpu没有4c8g的型号，考虑hello world不怎么耗内存，后续再考虑这个点。
-``
+```
 wrk -d20 -t4 -c100 http://172.16.56.122:8080/hello
 Running 20s test @ http://172.16.56.122:8080/hello
   4 threads and 100 connections
