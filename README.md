@@ -1,8 +1,69 @@
-# benchhello
+本工程测试不同语言、框架情况下 hello world HTTP 接口的极限 QPS。
 
-local vs network
-相同规格服务器的差异，似乎有，之后有空再看一下
-内存是16g，因为阿里云这款cpu没有4c8g的型号，考虑hello world不怎么耗内存，后续再考虑这个点。
+先说结论：Rust 服务器需要客户端 100 并发才能消耗所有 CPU，此时 QPS 是 50 万。也注意到 30 并发 Java 服务器确实比较低，下面一步步分析。
+
+# 压测环境和配置
+
+压测时，最好避免本地压本地，这是因为本地 loopback 网卡 kernel 处理不一样，压测程序也和服务器竞争 CPU 资源。[之前踩过坑](https://github.com/tokio-rs/tokio/issues/5010)。
+
+阿里云北京地域创建两台服务器，作为客户端和服务端。
+服务端型号为 ecs.g7.xlarge，配置 4C16G，CPU型号 CPU Model Intel(R) Xeon(R) Platinum 8369B CPU @ 2.70GHz，注意到内存是 16G，因为没 8G 的规格，下面测试时注意程序的内存使用。
+客户端型号为 ecs.g7.2xlarge，配置 8C32G，注意到规格较高，避免客户端压测时遇到瓶颈。
+服务器间网络带宽为 10Gbps，用 ping 测试时延为 0.08 ms。
+
+服务端系统为 Ubuntu 20.04，内核为 5.15.0，内核参数未调整。压测用 wrk 工具，连接数最好是线程数的倍数。
+
+也注意到同型号服务器压测，数据也不一样，可能是底层物理机调度和网络抖动导致。所以这里的值仅为参考。
+
+# Rust 50万 QPS 复现
+
+| 配置  | 客户端  |  QPS | 平均时延  | 服务器CPU利用率  |
+|---|---|---|---|---|
+| Rust   | -t8 -c104   | 563743   | 185us  | ~99%  |
+| Rust  | -t8 -c32  | 289072  |  110us |  ~47% |
+|   |   |   |   |   |
+
+```
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   185.99us  113.76us   5.46ms   88.85%
+    Req/Sec    70.83k     6.55k   88.69k    65.92%
+  11331179 requests in 20.10s, 464.67MB read
+Requests/sec: 563743.67
+Transfer/sec:     23.12MB
+#####
+wrk -t8 -c32 -d20 http://172.28.172.48:8080/
+hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 32 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   110.23us   58.81us   6.60ms   99.64%
+    Req/Sec    36.32k   804.43    39.32k    68.16%
+  5810233 requests in 20.10s, 238.27MB read
+Requests/sec: 289072.73
+Transfer/sec:     11.85MB
+```
+
+
+# Java Netty & Undertow
+
+| 配置  | 客户端  |  QPS | 平均时延  | 服务器CPU利用率  |
+|---|---|---|---|---|
+| Netty+Epoll   | -t8 -c104   | 563743   | 185us  | ~99%  |
+| Netty+Epoll+Thread per core  | -t8 -c32  | 289072  |  110us |  ~47% |
+| Netty+Iouring+  |   |   |   |   |
+# Java Reactor Http
+
+# Spring webflux
+
+# Spring MVC
+
+
+
+客户端 -c需要是核数
+
 ```
 wrk -d20 -t4 -c100 http://172.16.56.122:8080/hello
 Running 20s test @ http://172.16.56.122:8080/hello

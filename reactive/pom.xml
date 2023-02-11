@@ -15,12 +15,12 @@
             <groupId>io.projectreactor.netty</groupId>
             <artifactId>reactor-netty-http</artifactId>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>io.netty.incubator</groupId>
             <artifactId>netty-incubator-transport-native-io_uring</artifactId>
             <version>0.0.12.Final</version>
             <classifier>linux-x86_64</classifier>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
