@@ -1,0 +1,211 @@
+rust
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   185.99us  113.76us   5.46ms   88.85%
+    Req/Sec    70.83k     6.55k   88.69k    65.92%
+  11331179 requests in 20.10s, 464.67MB read
+Requests/sec: 563743.67
+Transfer/sec:     23.12MB
+
+wrk -t8 -c32 -d20 http://172.28.172.48:8080/
+hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 32 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   110.23us   58.81us   6.60ms   99.64%
+    Req/Sec    36.32k   804.43    39.32k    68.16%
+  5810233 requests in 20.10s, 238.27MB read
+Requests/sec: 289072.73
+Transfer/sec:     11.85MB
+
+rewrk -t8 -c104 -d20s --host http://172.28.172.48:8080/hello
+Beginning round 1...
+Benchmarking 104 connections @ http://172.28.172.48:8080/hello for 20 second(s)
+  Latencies:
+    Avg      Stdev    Min      Max
+    0.24ms   0.08ms   0.07ms   9.81ms
+  Requests:
+    Total: 8724498 Req/Sec: 436208.29
+  Transfer:
+    Total: 357.77 MB Transfer Rate: 17.89 MB/Sec
+
+83MiB
+
+nettymain
+
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   269.68us  189.49us  11.32ms   93.53%
+    Req/Sec    49.14k     4.52k   59.75k    60.95%
+  7861709 requests in 20.10s, 517.33MB read
+Requests/sec: 391129.10
+Transfer/sec:     25.74MB
+
+99% + 305MiB
+
+
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   114.38us   37.03us   3.73ms   96.24%
+    Req/Sec    43.68k   821.00    46.53k    71.23%
+  5240798 requests in 20.10s, 344.86MB read
+Requests/sec: 260736.14
+Transfer/sec:     17.16MB
+
+64% + 305MiB
+
+nettyiouring
+效果不好哦，可能是系统参数没调对
+
+netty tpc  (thread per core)
+
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   266.63us  178.15us   9.95ms   87.78%
+    Req/Sec    49.55k     8.89k   65.91k    62.38%
+  7927511 requests in 20.10s, 521.66MB read
+Requests/sec: 394406.08
+Transfer/sec:     25.95MB
+99 +354MiB
+
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   114.62us   58.09us   6.64ms   99.32%
+    Req/Sec    43.79k     1.05k   46.90k    69.57%
+  5253767 requests in 20.10s, 345.72MB read
+Requests/sec: 261391.34
+Transfer/sec:     17.20MB
+60% + 354MiB
+
+
+reactor + uring
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.28ms    2.66ms  26.31ms   89.28%
+    Req/Sec    33.11k     2.66k   41.99k    70.09%
+  5296394 requests in 20.10s, 217.19MB read
+Requests/sec: 263507.30
+Transfer/sec:     10.81MB
+97% + 272MiB
+
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   147.80us   77.12us   7.25ms   92.75%
+    Req/Sec    34.43k     1.28k   39.43k    73.13%
+  4130708 requests in 20.10s, 169.39MB read
+Requests/sec: 205516.13
+Transfer/sec:      8.43MB
+
+
+reactor + epoll (1+4)
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.39ms    3.01ms  28.36ms   89.24%
+    Req/Sec    34.46k     3.20k   44.15k    67.97%
+  5512426 requests in 20.10s, 226.05MB read
+Requests/sec: 274250.42
+Transfer/sec:     11.25MB
+99% + 356MiB
+
+
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   137.48us   70.28us   6.27ms   92.94%
+    Req/Sec    36.86k     1.06k   40.78k    70.81%
+  4422828 requests in 20.10s, 181.37MB read
+Requests/sec: 220045.77
+Transfer/sec:      9.02MB
+
+81% + 356MiB
+
+
+undertow
+
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   232.42us    1.17ms 206.06ms   99.85%
+    Req/Sec    59.55k     4.83k   70.33k    65.49%
+  9527824 requests in 20.10s, 1.22GB read
+Requests/sec: 474021.33
+Transfer/sec:     61.93MB
+99% 261MiB
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   112.40us   48.75us   4.61ms   98.57%
+    Req/Sec    44.55k     1.07k   47.22k    68.16%
+  5344948 requests in 20.10s, 698.34MB read
+Requests/sec: 265927.77
+Transfer/sec:     34.74MB
+
+55% 259MiB
+
+
+
+webflux handler
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.08ms    0.97ms  28.26ms   98.52%
+    Req/Sec    13.09k     1.22k   14.04k    97.01%
+  2094384 requests in 20.10s, 165.78MB read
+Requests/sec: 104200.12
+Transfer/sec:      8.25MB
+99% 369M
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   313.09us  495.50us  19.42ms   98.99%
+    Req/Sec    17.77k     1.14k   20.96k    80.68%
+  2132883 requests in 20.10s, 168.83MB read
+Requests/sec: 106116.14
+Transfer/sec:      8.40MB
+99%
+
+webflux annotation
+本地结果不一样，阿里云上压测，结果差不多。不做了。
+
+mvc
+wrk -t8 -c104 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  8 threads and 104 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.18ms  352.99us  21.19ms   84.72%
+    Req/Sec    11.08k   605.87    12.67k    80.78%
+  1772237 requests in 20.10s, 199.76MB read
+Requests/sec:  88172.87
+Transfer/sec:      9.94MB
+93%+351MiB
+wrk -t6 -c30 -d20 http://172.28.172.48:8080/hello
+Running 20s test @ http://172.28.172.48:8080/hello
+  6 threads and 30 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   352.21us  250.16us  16.40ms   98.39%
+    Req/Sec    14.61k   468.63    15.83k    73.88%
+  1753576 requests in 20.10s, 197.65MB read
+Requests/sec:  87243.77
+Transfer/sec:      9.83MB
+93%+351MiB

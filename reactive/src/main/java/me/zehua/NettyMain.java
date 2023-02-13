@@ -46,6 +46,7 @@ public class NettyMain {
                     .channel(EpollServerSocketChannel.class)
                     .childHandler(new HttpHelloWorldServerInitializer());
             Channel ch = b.bind("0.0.0.0", 8080).sync().channel();
+            
 
             System.out.println("starting server");
 

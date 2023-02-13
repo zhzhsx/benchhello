@@ -10,8 +10,7 @@ import reactor.netty.resources.LoopResources;
  */
 public class ReactorMain {
     public static void main(String[] args) {
-        // 压测环境实测，1+5 相对 1+4 QPS略微高
-        LoopResources loop = LoopResources.create("event-loop", 1, 5, true);
+        LoopResources loop = LoopResources.create("event-loop", 1, 4, true);
 
         HttpServer server = HttpServer.create()
                 .host("0.0.0.0")
